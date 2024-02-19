@@ -424,8 +424,8 @@ class Calculator {
 
   pressClear() {
     // console.log("clear");
-    if (this.state == "OPERAND_1") {
-      this.operand1 = "0";
+    if (this.state == "OPERAND_1" || document.getElementById("clearButton").innerHTML == "AC") {
+      this.reset();
     } else {
       this.operand2 = "0";
     }
