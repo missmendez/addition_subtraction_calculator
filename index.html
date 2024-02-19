@@ -440,9 +440,9 @@ class Calculator {
 
   pressPlusMinus() {
     // console.log("+/-");
-    if (this.state == "OPERAND_1") {
+    if (this.state == "OPERAND_1" && this.operand1 != "0") {
       this.operand1 = this.operand1.startsWith("-") ? this.operand1.substring(1) : "-"+this.operand1;
-    } else {
+    } else if (this.operand2 != "0") {
       this.operand2 = this.operand2.startsWith("-") ? this.operand2.substring(1) : "-"+this.operand2;
     }
 
