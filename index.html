@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Calculator</title>
+  <title>Addition & Subtraction Calculator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
@@ -21,8 +21,18 @@
     }
 
     .hidden {
-      visibility: hidden;
+      opacity: 0;
     }
+
+    @keyframes uncover {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    .uncovered {
+      animation: uncover linear 0.25s forwards;
+    }
+
 
     nav {
       font-size: 22px;
@@ -117,6 +127,7 @@
 
     #operand2_row #operation {
       font-size: 155px;
+      padding-right: 20px;
     }
 
     #calculator {
@@ -138,6 +149,10 @@
       width: 80px;
       height: 80px; 
       text-align: center;
+    }
+
+    #clearButton {
+      font-size: 35px;
     }
 
     #calculator td.orange {
@@ -174,11 +189,22 @@
       border: 2px solid black;
       background-color: rgba(211, 211, 211, 0.34);
       border-radius: 12.5px;
+      overflow: hidden;
+    }
+
+    #calculatorDisplayContainer {
+      /* TODO: magic numbers need to be changed if you mess with font sizes */
+      max-width: 362px;
+      max-height: 139px;
+      width: 362px;
+      height: 139px;
     }
 
     #calculatorDisplay span {
       font-size: 100px;
       padding-right: 25px;
+      display: inline-block;
+      transform-origin: bottom right;
     }
 
     @keyframes calcButtonTap {
@@ -188,6 +214,15 @@
 
     .circleButton:active, #zeroButton:active {
       animation: calcButtonTap linear 0.25s;
+    }
+
+    @keyframes highlightButton {
+      0% { filter: brightness(100%); }
+      100% { filter: brightness(150%); }
+    }
+
+    .highlightedOperation {
+      animation: highlightButton linear 0.1s forwards;
     }
 
   </style>
@@ -200,8 +235,8 @@
       <label for="addition">Addition</label>
       <input type="radio" id="subtraction" name="additionOrSubtraction" value="subtraction">
       <label for="subtraction">Subtraction</label>
-      using numbers up to <input type="text" value="50" size="3">
-      <button>Save</button>
+      using numbers up to <input type="text" value="50" size="3" id="up_to">
+      <button id="saveButton">Save</button>
     </div>
     <img src="./images/Buttons/Restart.png" id="restartButton" height="42">
   </nav>
@@ -211,25 +246,59 @@
     <p align="right">Hello, world!</p> -->
     <div id="problem">
       <table id="problem_table">
-        <tr><td></td><td>13</td></tr>
-        <tr id="operand2_row"><td id="operation">+</td><td align="right">7</td></tr>
-        <tr><td></td><td align="right" id="problem_answer">20</td></tr>
+        <tr><td></td><td id="first_number" align="right">13</td></tr>
+        <tr id="operand2_row"><td id="operation">+</td><td align="right" id="second_number">7</td></tr>
+        <tr><td  colspan="2" align="right" id="problem_answer" class="hidden">20</td></tr>
       </table>
     </div>
     <div id="calculator">
       <table>
-        <tr><td colspan="4" align="right" id="calculatorDisplay"><span>42</span></td></tr>
-        <tr><td class="circleButton gray">C</td><td class="circleButton gray"><sup>+</sup>/<sub>–</sub></td><td class="circleButton gray">%</td><td class="circleButton orange">÷</td></tr>
-        <tr><td class="circleButton">7</td><td class="circleButton">8</td><td class="circleButton">9</td><td class="circleButton orange">×</td></tr>
-        <tr><td class="circleButton">4</td><td class="circleButton">5</td><td class="circleButton">6</td><td class="circleButton orange">–</td></tr>
-        <tr><td class="circleButton">1</td><td class="circleButton">2</td><td class="circleButton">3</td><td class="circleButton orange">+</td></tr>
-        <tr><td colspan="2" align="left" id="zeroButton">&nbsp;&nbsp;0</td><td class="circleButton">.</td><td class="circleButton orange">=</td></tr>
+        <tr>
+          <td colspan="4" align="right" id="calculatorDisplay">
+            <div id="calculatorDisplayContainer">
+              <span id="calculatorDisplayNumber">42</span>
+            </div>
+          </td>
+</tr>
+        <tr>
+          <td class="circleButton gray" id="clearButton">AC</td>
+          <td class="circleButton gray" id="plusMinusButton"><sup>+</sup>/<sub>–</sub></td>
+          <td class="circleButton gray" id="percentButton">%</td>
+          <td class="circleButton orange" id="divideButton">÷</td>
+        </tr>
+        <tr>
+          <td class="circleButton" id="sevenButton">7</td>
+          <td class="circleButton" id="eightButton">8</td>
+          <td class="circleButton" id="nineButton">9</td>
+          <td class="circleButton orange" id="timesButton">×</td>
+        </tr>
+        <tr>
+          <td class="circleButton" id="fourButton">4</td>
+          <td class="circleButton" id="fiveButton">5</td>
+          <td class="circleButton" id="sixButton">6</td>
+          <td class="circleButton orange" id="minusButton">–</td>
+        </tr>
+        <tr>
+          <td class="circleButton" id="oneButton">1</td>
+          <td class="circleButton" id="twoButton">2</td>
+          <td class="circleButton" id="threeButton">3</td>
+          <td class="circleButton orange" id="plusButton">+</td>
+        </tr>
+        <tr>
+          <td colspan="2" align="left" id="zeroButton">&nbsp;&nbsp;0</td>
+          <td class="circleButton" id="decimalButton">.</td>
+          <td class="circleButton orange" id="equalsButton">=</td>
+        </tr>
       </table>
     </div>
   </main>
   </div>
 
 <script>
+let c = undefined;
+let game_style = undefined;
+let up_to = undefined;
+
 function playFireworks() {
   setTimeout(() => {
     confetti({
@@ -255,9 +324,303 @@ function resize() {
   document.getElementById("rest").style.marginLeft = `${marginLeft}px`;
 }
 
+class Calculator {
+  constructor() {
+    this.setupListeners();
+
+    this.reset();
+
+    this.updateDisplay();
+  }
+
+  reset() {
+    this.operand1 = "0";
+    this.operand2 = "0";
+    this.replaceOnNextDigit = true;
+    this.operation = undefined;
+    this.state = "OPERAND_1";
+
+    this.updateDisplay();
+  }
+
+  setupListeners() {
+    document.getElementById("zeroButton").addEventListener("click", () => this.pressDigit(0));
+    document.getElementById("oneButton").addEventListener("click", () => this.pressDigit(1));
+    document.getElementById("twoButton").addEventListener("click", () => this.pressDigit(2));
+    document.getElementById("threeButton").addEventListener("click", () => this.pressDigit(3));
+    document.getElementById("fourButton").addEventListener("click", () => this.pressDigit(4));
+    document.getElementById("fiveButton").addEventListener("click", () => this.pressDigit(5));
+    document.getElementById("sixButton").addEventListener("click", () => this.pressDigit(6));
+    document.getElementById("sevenButton").addEventListener("click", () => this.pressDigit(7));
+    document.getElementById("eightButton").addEventListener("click", () => this.pressDigit(8));
+    document.getElementById("nineButton").addEventListener("click", () => this.pressDigit(9));
+
+    document.getElementById("plusButton").addEventListener("click", () => this.pressOperation("+"));
+    document.getElementById("minusButton").addEventListener("click", () => this.pressOperation("-"));
+    document.getElementById("timesButton").addEventListener("click", () => this.pressOperation("*"));
+    document.getElementById("divideButton").addEventListener("click", () => this.pressOperation("/"));
+
+    document.getElementById("clearButton").addEventListener("click", () => this.pressClear());
+    document.getElementById("plusMinusButton").addEventListener("click", () => this.pressPlusMinus());
+    document.getElementById("percentButton").addEventListener("click", () => this.pressPercent());
+    document.getElementById("decimalButton").addEventListener("click", () => this.pressDecimal());
+    document.getElementById("equalsButton").addEventListener("click", () => this.pressEquals());
+  }
+
+  pressDigit(digit) {
+    // console.log(digit);
+    if (this.state == "OPERAND_1") {
+      if (this.operand1 == "0" || this.replaceOnNextDigit) {
+        this.operand1 = "";
+        this.replaceOnNextDigit = false;
+      }
+      this.operand1 += digit.toString();
+    } else {
+      if (this.operand2 == "0" || this.replaceOnNextDigit) {
+        this.operand2 = "";
+        this.replaceOnNextDigit = false;
+      }
+      this.operand2 += digit.toString();
+    }
+
+    this.updateDisplay();
+  }
+
+  highlightOperation() {
+    if (this.operation == "+") {
+      document.getElementById("plusButton").classList.add("highlightedOperation")
+    } else if (this.operation == "-") {
+      document.getElementById("minusButton").classList.add("highlightedOperation");
+    } else if (this.operation == "*") {
+      document.getElementById("timesButton").classList.add("highlightedOperation");
+    } else {
+      document.getElementById("divideButton").classList.add("highlightedOperation");
+    }
+  }
+
+  unhighlightOperation() {
+    document.getElementById("plusButton").classList.remove("highlightedOperation");
+    document.getElementById("minusButton").classList.remove("highlightedOperation");
+    document.getElementById("timesButton").classList.remove("highlightedOperation");
+    document.getElementById("divideButton").classList.remove("highlightedOperation");
+  }
+
+  pressOperation(op) {
+    // console.log(op);
+    this.operation = op;
+    this.state = "OPERAND_2";
+    this.operand2 = "0";
+    this.replaceOnNextDigit = true;
+
+    this.highlightOperation();
+
+    // don't update the display here
+  }
+
+  pressClear() {
+    // console.log("clear");
+    if (this.state == "OPERAND_1") {
+      this.operand1 = "0";
+    } else {
+      this.operand2 = "0";
+    }
+
+    this.updateDisplay();
+    if (this.state == "OPERAND_2") {
+      // override the logic in updateDisplay
+      document.getElementById("clearButton").innerHTML = "AC";
+      this.highlightOperation();
+    }
+  }
+
+  pressPlusMinus() {
+    // console.log("+/-");
+    if (this.state == "OPERAND_1") {
+      this.operand1 = this.operand1.startsWith("-") ? this.operand1.substring(1) : "-"+this.operand1;
+    } else {
+      this.operand2 = this.operand2.startsWith("-") ? this.operand2.substring(1) : "-"+this.operand2;
+    }
+
+    this.updateDisplay();
+  }
+
+  pressPercent() {
+    // console.log("%");
+    if (this.state == "OPERAND_1") {
+      this.operand1 = (parseFloat(this.operand1) * 0.01).toString();
+    } else {
+      this.operand2 = (parseFloat(this.operand2) * 0.01).toString();
+    }
+
+    this.replaceOnNextDigit = true;
+
+    this.updateDisplay();
+  }
+
+  pressDecimal() {
+    // console.log(".");
+    if (this.state == "OPERAND_1") {
+      this.operand1 = this.operand1.includes(".") ? this.operand1 : this.operand1 + ".";
+    } else {
+      this.operand2 = this.operand2.includes(".") ? this.operand2 : this.operand2 + ".";
+    }
+
+    this.updateDisplay();
+  }
+
+  applyOperation() {
+    let res;
+
+    if (this.operation == "+") {
+      res = parseFloat(this.operand1) + parseFloat(this.operand2);
+    } else if (this.operation == "-") {
+      res = parseFloat(this.operand1) - parseFloat(this.operand2);
+    } else if (this.operation == "*") {
+      res = parseFloat(this.operand1) * parseFloat(this.operand2);
+    } else {
+      res = parseFloat(this.operand1) / parseFloat(this.operand2);
+    }
+
+    return res.toString();
+  }
+
+  pressEquals() {
+    // console.log("=");
+
+    // do nothing if in the OPERAND_1 state
+    if (this.state == "OPERAND_2") {
+      let oldOperand1 = this.operand1;
+      let oldOperand2 = this.operand2;
+      let oldOperation = this.operation;
+      let answer = this.applyOperation();
+      this.reset();
+      this.operand1 = answer;
+      this.replaceOnNextDigit = true;
+      this.updateDisplay();
+
+      this.checkForSolution(oldOperand1, oldOperand2, oldOperation, answer);
+    }
+  }
+
+  updateDisplay() {
+    this.unhighlightOperation();
+
+    let numberSpan = document.getElementById("calculatorDisplayNumber");
+    let td = document.getElementById("calculatorDisplay");
+    let containerDiv = document.getElementById("calculatorDisplayContainer");
+    let containerDivWidth = containerDiv.getBoundingClientRect().width;
+    let tdWidth = td.getBoundingClientRect().width;
+
+    // update the number
+    if (this.state == "OPERAND_1") {
+      numberSpan.innerHTML = this.operand1;
+    } else {
+      numberSpan.innerHTML = this.operand2;
+    }
+
+    // AC <-> C
+    if (this.state == "OPERAND_1" && this.operand1 != "0" ||
+        this.state == "OPERAND_2") {
+      document.getElementById("clearButton").innerHTML = "C";
+    } else {
+      document.getElementById("clearButton").innerHTML = "AC";
+    }
+
+    if (numberSpan.innerHTML.length <= 1) {
+      numberSpan.style.transform = ""; // reset on clear/next num/etc.
+    }
+
+    let scale = 1.0;
+    if (numberSpan.style.transform != "") {
+      scale = parseFloat(numberSpan.style.transform.substring(6));
+    }
+    let numberSpanWidth = numberSpan.getBoundingClientRect().width;
+
+    let desiredWidth = containerDivWidth - 50; // 25 px on both sides thanks to existing padding
+    if (numberSpanWidth > desiredWidth) {
+      scale = scale * (desiredWidth / numberSpanWidth);
+      // console.log(scale);
+      numberSpan.style.transform = `scale(${scale})`;
+    }
+
+    if (scale != 1.0) {
+      // bring back to the left
+      let main = document.getElementsByTagName("main")[0];
+      let mainScale = 1.0;
+      if (main.style.transform != "") mainScale = parseFloat(main.style.transform.substring(6));
+
+      let numberSpanRight = numberSpan.getBoundingClientRect().right;
+      let containerDivRight = containerDiv.getBoundingClientRect().right;
+      let translation = (containerDivRight - numberSpanRight) / scale / mainScale;
+      numberSpan.style.transform += ` translateX(${translation}px)`;
+    }
+  }
+
+  checkForSolution(oldOperand1, oldOperand2, oldOperation, answer) {
+    let first_number = document.getElementById("first_number").innerHTML;
+    let second_number = document.getElementById("second_number").innerHTML;
+    let operation = document.getElementById("operation").innerHTML;
+    if (operation == '–') operation = '-';
+
+    if (oldOperand1 == first_number && oldOperand2 == second_number && oldOperation == operation) {
+      document.getElementById("problem_answer").classList.remove("hidden");
+      document.getElementById("problem_answer").classList.add("uncovered");
+      window.playFireworks();
+    }
+  }
+}
+
+function savePreferences() {
+  game_style = document.querySelector('input[name="additionOrSubtraction"]:checked').value;;
+  up_to = parseInt(document.getElementById("up_to").value);
+  if (Number.isNaN(up_to)) {
+    document.getElementById("up_to").value = "50";
+    up_to = 50;
+  }
+
+  newGame();
+}
+
+function randomInt(min, max) { // min and max included 
+  return Math.floor(Math.random() * (max - min + 1) + min)
+}
+
+function newGame() {
+  c.reset();
+
+  let num1 = randomInt(1, up_to);
+  let num2;
+  let answer;
+  if (game_style == "addition") {
+    answer = randomInt(num1, up_to);
+    num2 = answer - num1;
+  } else {
+    answer = randomInt(0, num1);
+    num2 = num1 - answer;
+  }
+
+  let first_number = document.getElementById("first_number");
+  let second_number = document.getElementById("second_number");
+  let operation = document.getElementById("operation");
+  document.getElementById("problem_answer").classList.remove("uncovered");
+  document.getElementById("problem_answer").classList.add("hidden");
+
+  first_number.innerHTML = num1.toString();
+  second_number.innerHTML = num2.toString();
+  operation.innerHTML = (game_style == "addition") ? "+" : "–";
+  document.getElementById("problem_answer").innerHTML = answer.toString();
+}
+
 document.addEventListener("DOMContentLoaded", (e) => {
   resize();
   window.addEventListener("resize", resize);
+
+  document.getElementById("restartButton").onclick = newGame;
+  document.getElementById("saveButton").onclick = savePreferences;
+
+  c = new Calculator();
+
+  savePreferences();
 });
 </script>
 </body>
