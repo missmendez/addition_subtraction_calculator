@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>Addition & Subtraction Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
@@ -407,11 +408,15 @@ class Calculator {
 
   pressOperation(op) {
     // console.log(op);
+
+    // TODO: press enter after pressing another operation during the OPERAND_2 stage to chain operations
+
     this.operation = op;
     this.state = "OPERAND_2";
     this.operand2 = "0";
     this.replaceOnNextDigit = true;
 
+    this.unhighlightOperation();
     this.highlightOperation();
 
     // don't update the display here
