@@ -365,7 +365,7 @@ class Calculator {
     document.getElementById("plusMinusButton").addEventListener("click", () => this.pressPlusMinus());
     document.getElementById("percentButton").addEventListener("click", () => this.pressPercent());
     document.getElementById("decimalButton").addEventListener("click", () => this.pressDecimal());
-    document.getElementById("equalsButton").addEventListener("click", () => this.pressEquals());
+    document.getElementById("equalsButton").addEventListener("click", () => this.pressEquals(true));
   }
 
   pressDigit(digit) {
@@ -409,17 +409,21 @@ class Calculator {
   pressOperation(op) {
     // console.log(op);
 
-    // TODO: press enter after pressing another operation during the OPERAND_2 stage to chain operations
+    if (this.state == "OPERAND_1") {
+      this.operation = op;
+      this.state = "OPERAND_2";
+      this.operand2 = "0";
+      this.replaceOnNextDigit = true;
 
-    this.operation = op;
-    this.state = "OPERAND_2";
-    this.operand2 = "0";
-    this.replaceOnNextDigit = true;
+      this.unhighlightOperation();
+      this.highlightOperation();
 
-    this.unhighlightOperation();
-    this.highlightOperation();
-
-    // don't update the display here
+      // don't update the display here
+    } else {
+      // press equals after pressing another operation during the OPERAND_2 stage to chain operations
+      this.pressEquals(false);
+      this.pressOperation(op); // recursively call ourselves here to start of the next operation
+    }
   }
 
   pressClear() {
@@ -489,7 +493,7 @@ class Calculator {
     return res.toString();
   }
 
-  pressEquals() {
+  pressEquals(shouldCheck) {
     // console.log("=");
 
     // do nothing if in the OPERAND_1 state
@@ -503,7 +507,7 @@ class Calculator {
       this.replaceOnNextDigit = true;
       this.updateDisplay();
 
-      this.checkForSolution(oldOperand1, oldOperand2, oldOperation, answer);
+      if (shouldCheck) this.checkForSolution(oldOperand1, oldOperand2, oldOperation, answer);
     }
   }
 
