@@ -624,6 +624,9 @@ document.addEventListener("DOMContentLoaded", (e) => {
   resize();
   window.addEventListener("resize", resize);
 
+  document.getElementById("addition").click();
+  document.getElementById("up_to").value = "50";
+
   document.getElementById("restartButton").onclick = newGame;
   document.getElementById("saveButton").onclick = savePreferences;
 
