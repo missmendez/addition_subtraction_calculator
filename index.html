@@ -419,6 +419,12 @@ class Calculator {
       this.highlightOperation();
 
       // don't update the display here
+    } else if (this.state == "OPERAND_2" && this.operand2 == "0" && this.replaceOnNextDigit) {
+      // swap out the operation and re-highlight
+      this.operation = op;
+
+      this.unhighlightOperation();
+      this.highlightOperation();
     } else {
       // press equals after pressing another operation during the OPERAND_2 stage to chain operations
       this.pressEquals(false);
